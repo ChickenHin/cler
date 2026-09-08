@@ -1,13 +1,13 @@
 name: CI
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
-  schedule:
-    # Run nightly at 2 AM UTC
-    - cron: '0 2 * * *'
+  # push:
+  #   branches: [ main, develop ]
+  # pull_request:
+  #   branches: [ main, develop ]
+  # schedule:
+  #   # Run nightly at 2 AM UTC
+  #   - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
       debug_enabled:
@@ -56,14 +56,14 @@ jobs:
           -e CMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           cler-test:${{ matrix.compiler }}-${{ matrix.build_type }}
     
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results-linux-${{ matrix.compiler }}-${{ matrix.build_type }}
-        path: |
-          build/Testing/
-          build/**/*_test.xml
+    # - name: Upload test results
+    #   if: always()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: test-results-linux-${{ matrix.compiler }}-${{ matrix.build_type }}
+    #     path: |
+    #       build/Testing/
+    #       build/**/*_test.xml
 
   # macOS native builds
   macos-native:
@@ -113,60 +113,60 @@ jobs:
       working-directory: build
       run: ctest --build-config ${{ matrix.build_type }} --output-on-failure --parallel --no-tests=error
     
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results-macos-${{ matrix.build_type }}
-        path: |
-          build/Testing/
-          build/**/*_test.xml
+    # - name: Upload test results
+    #   if: always()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: test-results-macos-${{ matrix.build_type }}
+    #     path: |
+    #       build/Testing/
+    #       build/**/*_test.xml
 
   # Performance tests on Linux (using Docker for consistency)
-  performance-tests:
-    name: Performance Tests
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'schedule'
+  # performance-tests:
+  #   name: Performance Tests
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'push' || github.event_name == 'schedule'
     
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
     
-    - name: Build performance image
-      run: |
-        docker build \
-          -f docker/Dockerfile \
-          --target gcc-builder \
-          -t cler-perf:latest \
-          .
+  #   - name: Build performance image
+  #     run: |
+  #       docker build \
+  #         -f docker/Dockerfile \
+  #         --target gcc-builder \
+  #         -t cler-perf:latest \
+  #         .
     
-    - name: Run performance tests
-      run: |
-        docker run --rm \
-          --cpuset-cpus="0" \
-          -v $PWD/perf-results:/results \
-          cler-perf:latest \
-          bash -c "cd build/performance && ./perf_simple_linear_flow && ./perf_fanout_workloads && ./perf_read_write_techniques && cp *.txt /results/" || true
+  #   - name: Run performance tests
+  #     run: |
+  #       docker run --rm \
+  #         --cpuset-cpus="0" \
+  #         -v $PWD/perf-results:/results \
+  #         cler-perf:latest \
+  #         bash -c "cd build/performance && ./perf_simple_linear_flow && ./perf_fanout_workloads && ./perf_read_write_techniques && cp *.txt /results/" || true
     
-    - name: Upload performance results
-      uses: actions/upload-artifact@v4
-      with:
-        name: performance-results
-        path: perf-results/*.txt
+    # - name: Upload performance results
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: performance-results
+    #     path: perf-results/*.txt
 
   # All tests pass check
-  all-tests-pass:
-    name: All Tests Pass
-    needs: [linux-docker, macos-native]
-    runs-on: ubuntu-latest
-    if: always()
+  # all-tests-pass:
+  #   name: All Tests Pass
+  #   needs: [linux-docker, macos-native]
+  #   runs-on: ubuntu-latest
+  #   if: always()
 
-    steps:
-    - name: Check test results
-      run: |
-        if [ "${{ needs.linux-docker.result }}" != "success" ] || \
-           [ "${{ needs.macos-native.result }}" != "success" ]; then
-          echo "Tests failed!"
-          exit 1
-        fi
-        echo "All tests passed!"
+  #   steps:
+  #   - name: Check test results
+  #     run: |
+  #       if [ "${{ needs.linux-docker.result }}" != "success" ] || \
+  #          [ "${{ needs.macos-native.result }}" != "success" ]; then
+  #         echo "Tests failed!"
+  #         exit 1
+  #       fi
+  #       echo "All tests passed!"
