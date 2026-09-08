@@ -1,22 +1,22 @@
 name: cler-fg
 
 on:
-  push:
-    branches: [ main, develop ]
-    paths:
-      - 'tools/cler-fg/**'
-      - 'desktop_examples/**'
-      - 'desktop_blocks/**'
-      - 'include/**'
-      - '.github/workflows/gui.yml'
-  pull_request:
-    branches: [ main, develop ]
-    paths:
-      - 'tools/cler-fg/**'
-      - 'desktop_examples/**'
-      - 'desktop_blocks/**'
-      - 'include/**'
-      - '.github/workflows/gui.yml'
+  # push:
+  #   branches: [ main, develop ]
+  #   paths:
+  #     - 'tools/cler-fg/**'
+  #     - 'desktop_examples/**'
+  #     - 'desktop_blocks/**'
+  #     - 'include/**'
+  #     - '.github/workflows/gui.yml'
+  # pull_request:
+  #   branches: [ main, develop ]
+  #   paths:
+  #     - 'tools/cler-fg/**'
+  #     - 'desktop_examples/**'
+  #     - 'desktop_blocks/**'
+  #     - 'include/**'
+  #     - '.github/workflows/gui.yml'
   workflow_dispatch:
 
 jobs:
